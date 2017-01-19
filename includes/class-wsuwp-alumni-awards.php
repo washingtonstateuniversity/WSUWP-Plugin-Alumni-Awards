@@ -21,6 +21,19 @@ class WSUWP_Alumni_Awards {
 	var $taxonomy_slug = 'award';
 
 	/**
+	 * A list of post meta keys associated with awardees.
+	 *
+	 * @var array
+	 */
+	var $post_meta_keys = array(
+		'year_awarded' => array(
+			'description' => 'Year received',
+			'type' => 'int',
+			'sanitize_callback' => 'absint',
+		),
+	);
+
+	/**
 	 * Maintain and return the one instance. Initiate hooks when
 	 * called the first time.
 	 *
@@ -44,6 +57,9 @@ class WSUWP_Alumni_Awards {
 	public function setup_hooks() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_taxonomy' ) );
+		add_action( 'init', array( $this, 'register_meta' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_awardee' ), 10, 2 );
 	}
 
 	/**
@@ -120,5 +136,93 @@ class WSUWP_Alumni_Awards {
 		);
 
 		register_taxonomy( $this->taxonomy_slug, array( $this->post_type_slug ), $args );
+	}
+
+	/**
+	 * Register the meta keys used to store awardee data.
+	 *
+	 * @since 0.1.0
+	 */
+	public function register_meta() {
+		foreach ( $this->post_meta_keys as $key => $args ) {
+			$args['show_in_rest'] = true;
+			$args['single'] = true;
+			register_meta( 'post', $key, $args );
+		}
+	}
+
+	/**
+	 * Add the meta boxes used to capture information about an awardee.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param string $post_type the current post type.
+	 */
+	public function add_meta_boxes( $post_type ) {
+		if ( $this->post_type_slug !== $post_type ) {
+			return;
+		}
+
+		add_meta_box(
+			'awardee-data',
+			'Award Information',
+			array( $this, 'display_awardee_meta_box' ),
+			null,
+			'normal',
+			'high'
+		);
+	}
+
+	/**
+	 * Capture the main set of data about an awardee.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param WP_Post $post The current post object.
+	 */
+	public function display_awardee_meta_box( $post ) {
+		$data = get_registered_metadata( 'post', $post->ID );
+
+		wp_nonce_field( 'save-awardee-data', '_awardee_data_nonce' );
+
+		foreach ( $this->post_meta_keys as $key => $meta ) {
+			$value = ( isset( $data[ $key ][0] ) ) ? absint( $data[ $key ][0] ) : '';
+			?>
+			<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description'] ); ?>:
+				<input type="number" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+			</label>
+			<?php
+		}
+	}
+
+	/**
+	 * Save additional data associated with an awardee.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int     $post_id The current post ID.
+	 * @param WP_Post $post    The current post object.
+	 */
+	public function save_awardee( $post_id, $post ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( 'auto-draft' === $post->post_status ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['_awardee_data_nonce'] ) || ! wp_verify_nonce( $_POST['_awardee_data_nonce'], 'save-awardee-data' ) ) {
+			return;
+		}
+
+		$keys = get_registered_meta_keys( 'post' );
+
+		foreach ( $this->post_meta_keys as $key => $meta ) {
+			if ( isset( $_POST[ $key ] ) && isset( $keys[ $key ] ) && isset( $keys[ $key ]['sanitize_callback'] ) ) {
+				// Each piece of meta is registered with sanitization.
+				update_post_meta( $post_id, $key, $_POST[ $key ] );
+			}
+		}
 	}
 }
