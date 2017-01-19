@@ -14,6 +14,13 @@ class WSUWP_Alumni_Awards {
 	var $post_type_slug = 'awardee';
 
 	/**
+	 * The slug used to register the award taxonomy.
+	 *
+	 * @var string
+	 */
+	var $taxonomy_slug = 'award';
+
+	/**
 	 * Maintain and return the one instance. Initiate hooks when
 	 * called the first time.
 	 *
@@ -36,6 +43,7 @@ class WSUWP_Alumni_Awards {
 	 */
 	public function setup_hooks() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_taxonomy' ) );
 	}
 
 	/**
@@ -82,5 +90,35 @@ class WSUWP_Alumni_Awards {
 		);
 
 		register_post_type( $this->post_type_slug, $args );
+	}
+
+	/**
+	 * Register the taxonomy that will track the type of award recieved by the awardee.
+	 *
+	 * @since 0.0.1
+	 */
+	public function register_taxonomy() {
+		$labels = array(
+			'name' => 'Awards',
+			'singular_name' => 'Award',
+			'search_items' => 'Search awards',
+			'all_items' => 'All Awards',
+			'edit_item' => 'Edit Award',
+			'update_item' => 'Update Award',
+			'add_new_item' => 'Add New Award',
+			'new_item_name' => 'New Award',
+			'menu_name' => 'Awards',
+		);
+
+		$args = array(
+			'labels' => $labels,
+			'description' => 'Types of WSU Alumni Association awards.',
+			'public' => true,
+			'hierarchical' => true,
+			'rewrite' => false,
+			'show_in_rest' => true,
+		);
+
+		register_taxonomy( $this->taxonomy_slug, array( $this->post_type_slug ), $args );
 	}
 }
