@@ -20,6 +20,8 @@ add_action( 'after_setup_theme', 'WSUWP_Alumni_Awards' );
 /**
  * Start things up.
  *
+ * @since 0.0.1
+ *
  * @return \WSUWP_Alumni_Awards
  */
 function WSUWP_Alumni_Awards() {

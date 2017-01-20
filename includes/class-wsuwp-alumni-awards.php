@@ -2,12 +2,16 @@
 
 class WSUWP_Alumni_Awards {
 	/**
+	 * @since 0.0.1
+	 *
 	 * @var WSUWP_Alumni_Awards
 	 */
 	private static $instance;
 
 	/**
 	 * The slug used to register the awardee post type.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var string
 	 */
@@ -16,12 +20,16 @@ class WSUWP_Alumni_Awards {
 	/**
 	 * The slug used to register the award taxonomy.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @var string
 	 */
 	var $taxonomy_slug = 'award';
 
 	/**
 	 * A list of post meta keys associated with awardees.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var array
 	 */
@@ -141,7 +149,7 @@ class WSUWP_Alumni_Awards {
 	/**
 	 * Register the meta keys used to store awardee data.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
@@ -176,7 +184,7 @@ class WSUWP_Alumni_Awards {
 	/**
 	 * Capture the main set of data about an awardee.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 *
 	 * @param WP_Post $post The current post object.
 	 */
@@ -198,7 +206,7 @@ class WSUWP_Alumni_Awards {
 	/**
 	 * Save additional data associated with an awardee.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 *
 	 * @param int     $post_id The current post ID.
 	 * @param WP_Post $post    The current post object.
