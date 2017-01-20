@@ -196,7 +196,7 @@ class WSUWP_Alumni_Awards {
 		foreach ( $this->post_meta_keys as $key => $meta ) {
 			$value = ( isset( $data[ $key ][0] ) ) ? absint( $data[ $key ][0] ) : '';
 			?>
-			<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description'] ); ?>:
+			<label><?php echo esc_html( $meta['description'] ); ?>:
 				<input type="number" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 			</label>
 			<?php
