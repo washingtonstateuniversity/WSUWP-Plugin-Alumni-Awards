@@ -66,7 +66,7 @@ class WSUWP_Alumni_Awards {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_taxonomy' ) );
 		add_action( 'init', array( $this, 'register_meta' ) );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( "add_meta_boxes_{$this->post_type_slug}", array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_awardee' ), 10, 2 );
 	}
 
@@ -167,10 +167,6 @@ class WSUWP_Alumni_Awards {
 	 * @param string $post_type the current post type.
 	 */
 	public function add_meta_boxes( $post_type ) {
-		if ( $this->post_type_slug !== $post_type ) {
-			return;
-		}
-
 		add_meta_box(
 			'awardee-data',
 			'Award Information',
