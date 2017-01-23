@@ -35,9 +35,14 @@ class WSUWP_Alumni_Awards {
 	 */
 	var $post_meta_keys = array(
 		'year_awarded' => array(
-			'description' => 'Year received',
+			'description' => 'Year awarded',
 			'type' => 'int',
 			'sanitize_callback' => 'absint',
+		),
+		'graduated' => array(
+			'description' => 'Year(s) awardee graduated',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
 		),
 	);
 
@@ -140,6 +145,7 @@ class WSUWP_Alumni_Awards {
 			'public' => true,
 			'hierarchical' => true,
 			'rewrite' => false,
+			'show_admin_column' => true,
 			'show_in_rest' => true,
 		);
 
@@ -190,11 +196,19 @@ class WSUWP_Alumni_Awards {
 		wp_nonce_field( 'save-awardee-data', '_awardee_data_nonce' );
 
 		foreach ( $this->post_meta_keys as $key => $meta ) {
-			$value = ( isset( $data[ $key ][0] ) ) ? absint( $data[ $key ][0] ) : '';
+			$value = ( isset( $data[ $key ][0] ) ) ? $data[ $key ][0] : '';
+
+			if ( 'int' === $meta['type'] ) {
+				$input_type = 'number';
+			} else {
+				$input_type = 'text';
+			}
 			?>
-			<label><?php echo esc_html( $meta['description'] ); ?>:
-				<input type="number" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
-			</label>
+			<p>
+				<label><?php echo esc_html( $meta['description'] ); ?>:
+					<input type="<?php echo esc_attr( $input_type ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+				</label>
+			</p>
 			<?php
 		}
 	}
