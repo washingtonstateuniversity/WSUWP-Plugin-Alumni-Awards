@@ -34,13 +34,28 @@ class WSUWP_Alumni_Awards {
 	 * @var array
 	 */
 	var $post_meta_keys = array(
-		'year_awarded' => array(
-			'description' => 'Year awarded',
-			'type' => 'int',
-			'sanitize_callback' => 'absint',
+		'name_first' => array(
+			'description' => 'Given name',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
 		),
-		'graduated' => array(
-			'description' => 'Year(s) awardee graduated',
+		'name_last' => array(
+			'description' => 'Surname',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'class' => array(
+			'description' => 'Class of',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'awarded' => array(
+			'description' => 'Year Awarded/Inducted',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'sport' => array(
+			'description' => 'Sport(s)',
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
@@ -175,7 +190,7 @@ class WSUWP_Alumni_Awards {
 	public function add_meta_boxes( $post_type ) {
 		add_meta_box(
 			'awardee-data',
-			'Award Information',
+			'Awardee Information',
 			array( $this, 'display_awardee_meta_box' ),
 			null,
 			'normal',
@@ -197,16 +212,10 @@ class WSUWP_Alumni_Awards {
 
 		foreach ( $this->post_meta_keys as $key => $meta ) {
 			$value = ( isset( $data[ $key ][0] ) ) ? $data[ $key ][0] : '';
-
-			if ( 'int' === $meta['type'] ) {
-				$input_type = 'number';
-			} else {
-				$input_type = 'text';
-			}
 			?>
 			<p>
 				<label><?php echo esc_html( $meta['description'] ); ?>:
-					<input type="<?php echo esc_attr( $input_type ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+					<input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				</label>
 			</p>
 			<?php
