@@ -125,8 +125,6 @@ class WSUWP_Alumni_Awards {
 			'supports' => array(
 				'title',
 				'editor',
-				'thumbnail',
-				'revisions',
 			),
 			'has_archive' => true,
 			'show_in_rest' => true,
