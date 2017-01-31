@@ -208,16 +208,23 @@ class WSUWP_Alumni_Awards {
 
 		wp_nonce_field( 'save-awardee-data', '_awardee_data_nonce' );
 
+		?>
+		<div class="awardee-fields">
+		<?php
+
 		foreach ( $this->post_meta_keys as $key => $meta ) {
 			$value = ( isset( $data[ $key ][0] ) ) ? $data[ $key ][0] : '';
 			?>
 			<p>
-				<label><?php echo esc_html( $meta['description'] ); ?>:
-					<input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
-				</label>
+				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description'] ); ?>:</label>
+				<input type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 			</p>
 			<?php
 		}
+
+		?>
+		</div>
+		<?php
 	}
 
 	/**
