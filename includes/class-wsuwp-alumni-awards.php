@@ -88,6 +88,7 @@ class WSUWP_Alumni_Awards {
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( "add_meta_boxes_{$this->post_type_slug}", array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_awardee' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10 );
 	}
 
 	/**
@@ -255,6 +256,19 @@ class WSUWP_Alumni_Awards {
 				// Each piece of meta is registered with sanitization.
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
 			}
+		}
+	}
+
+	/**
+	 * Enqueue the styles used in the admin.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param string $hook_suffix The current admin page.
+	 */
+	public function admin_enqueue_scripts( $hook_suffix ) {
+		if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) && get_current_screen()->id === $this->post_type_slug ) {
+			wp_enqueue_style( 'alumni-awards-admin', plugins_url( 'css/admin.css', dirname( __FILE__ ) ) );
 		}
 	}
 }
