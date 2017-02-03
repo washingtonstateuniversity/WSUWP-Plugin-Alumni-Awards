@@ -1,0 +1,215 @@
+.table-list li .awardees {
+	display: none;
+}
+
+.table-list li.opened .awardees {
+	display: flex;
+}
+
+.award-description {
+	display: block;
+}
+
+.opened .award-description {
+	padding: 0 0 10px;
+}
+
+.awardees {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+
+.awardees-filters {
+	align-items: flex-end;
+	display: flex;
+	padding-bottom: 1rem;
+	width: 100%;
+}
+
+.awardees-sort-label,
+.awardees-sort {
+	display: inline-block;
+	cursor: pointer;
+	padding: 8px 20px 8px 8px;
+	position: relative;
+	text-transform: uppercase;
+}
+
+.awardees-sort-label {
+	cursor: initial;
+	padding-right: 0;
+}
+
+.awardees-sort:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.awardees-sort:after {
+	bottom: 0;
+	content: "\f0dc";
+	font-family: FontAwesome;
+	font-weight: 400;
+	font-size: 14px;
+	height: 14px;
+	left: auto;
+	line-height: 1;
+	margin: auto;
+	position: absolute;
+	right: 6px;
+	top: 0;
+	-webkit-font-smoothing: antialiased;
+}
+
+.awardees-sort[aria-sort="descending"]:after {
+	content: "\f0dd";
+	height: 20px;
+}
+
+.awardees-sort[aria-sort="ascending"]:after {
+	content: "\f0de";
+	height: 7px;
+}
+
+.awardees-search {
+	margin: 0 0 0 auto;
+	white-space: nowrap;
+}
+
+.awardees-search label {
+	font-size: 1.5rem;
+	line-height: 1.7rem;
+}
+
+.awardees-search input {
+	background: rgba(255, 255, 255, .5);
+	display: inline;
+	font-size: 1.5rem;
+	margin: 2px;
+	padding: .5rem;
+	width: auto;
+}
+
+.awardee {
+	border-top: 3px solid rgba(0, 0, 0, .5);
+	box-sizing: border-box;
+	float: left;
+	padding: 1rem 0 1rem 30px;
+	position: relative;
+	width: 50%;
+}
+
+.unbox .awardee.show-inscription {
+	background: rgba(255, 255, 255, .95);
+	border-top: none;
+	border-radius: 1rem;
+	box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+	box-sizing: border-box;
+	height: 700px;
+	left: 50%;
+	margin: -23% 0 0 -25%;
+	overflow-y: scroll;
+	padding: 3.8rem;
+	position: fixed;
+	top: 50%;
+	width: 800px;
+	z-index: 9999;
+}
+
+.awardee header {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.awardee.has-inscription:before {
+	content: "\f05a";
+	cursor: pointer;
+	display: block;
+	font-family: FontAwesome;
+	font-size: 30px;
+	left: 0;
+	margin-top: 10px;
+	opacity: .5;
+	position: absolute;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.awardee.has-inscription.show-inscription:before {
+	content: initial;
+}
+
+.has-inscription:not(.show-inscription):hover header {
+	color: #fff;
+	cursor: pointer;
+}
+
+.unbox .has-inscription:not(.show-inscription):hover header {
+	color: #000;
+}
+
+.awardee header h3,
+.awardee header p {
+	padding: 5px 10px 5px 0;
+	zoom: 1;
+}
+
+.awardee header h3 {
+	font-family: Palatino, serif;
+	font-size: 2rem;
+	font-weight: 400;
+}
+
+.unbox .awardee.show-inscription header h3 {
+	width: 100%;
+}
+
+.awardee header .class,
+.awardee header .sport {
+	border-right: 1px solid #d7dadb;
+	margin-right: 10px;
+}
+
+.unbox .awardee.show-inscription header p {
+	text-transform: uppercase;
+}
+
+.unbox .awardee.show-inscription header .class:before {
+	content: "Class of ";
+}
+
+.awardee > div {
+	display: none;
+	width: 80%;
+}
+
+.awardee.show-inscription > div {
+	display: block;
+}
+
+.unbox .awardee.show-inscription:before {
+	content: "\f00d";
+	display: block;
+	font-family: FontAwesome;
+	font-size: 30px;
+	left: auto;
+	margin-top: -20px;
+	opacity: .5;
+	position: absolute;
+	right: 40px;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.unbox .awardee.show-inscription:hover:before {
+	opacity: 1;
+}
+
+.unbox .awardee.show-inscription header,
+.unbox .awardee.show-inscription > div {
+	color: #000;
+}
