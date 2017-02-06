@@ -302,6 +302,7 @@ class WSUWP_Alumni_Awards {
 		}
 
 		wp_enqueue_style( 'alumni-awards', plugins_url( 'css/shortcode.css', dirname( __FILE__ ) ) );
+		wp_enqueue_script( 'alumni-awards', plugins_url( 'js/shortcode.min.js', dirname( __FILE__ ) ), array( 'jquery' ) );
 
 		$award = get_term_by( 'slug', sanitize_text_field( $atts['award_slug'] ), $this->taxonomy_slug );
 
