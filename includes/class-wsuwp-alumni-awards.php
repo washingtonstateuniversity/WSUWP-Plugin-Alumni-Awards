@@ -9,6 +9,15 @@ class WSUWP_Alumni_Awards {
 	private static $instance;
 
 	/**
+	 * Track a version number for script enqueues.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @var string
+	 */
+	var $script_version = '0.0.1';
+
+	/**
 	 * The slug used to register the awardee post type.
 	 *
 	 * @since 0.0.1
@@ -89,6 +98,7 @@ class WSUWP_Alumni_Awards {
 		add_action( "add_meta_boxes_{$this->post_type_slug}", array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_awardee' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10 );
+		add_shortcode( 'alumni_awards', array( $this, 'display_alumni_awards' ) );
 	}
 
 	/**
@@ -270,5 +280,143 @@ class WSUWP_Alumni_Awards {
 		if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) && get_current_screen()->id === $this->post_type_slug ) {
 			wp_enqueue_style( 'alumni-awards-admin', plugins_url( 'css/admin.css', dirname( __FILE__ ) ) );
 		}
+	}
+
+	/**
+	 * Display alumni awardees.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $atts List of attributes passed to the shortcode.
+	 *
+	 * @return string Content to display for the shortcode.
+	 */
+	public function display_alumni_awards( $atts ) {
+		$defaults = array(
+			'award_slug' => '',
+			'awarded' => '',
+			'class' => '',
+			'filters' => '',
+			'header' => '',
+			'sport' => 'hide',
+			'type' => 'Recipient',
+			'inscription' => '',
+		);
+
+		$atts = shortcode_atts( $defaults, $atts );
+
+		// The `award_slug` attribute must be set.
+		if ( '' === $atts['award_slug'] ) {
+			return '<!-- No award_slug attribute set -->';
+		}
+
+		wp_enqueue_style( 'alumni-awards', plugins_url( 'css/shortcode.css', dirname( __FILE__ ) ), array(), $this->script_version );
+		wp_enqueue_script( 'alumni-awards', plugins_url( 'js/shortcode.min.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->script_version, true );
+
+		$award = get_term_by( 'slug', sanitize_text_field( $atts['award_slug'] ), $this->taxonomy_slug );
+
+		$query_args = array(
+			'post_type' => $this->post_type_slug,
+			'tax_query' => array(
+				array(
+					'taxonomy' => $this->taxonomy_slug,
+					'field' => 'slug',
+					'terms' => sanitize_text_field( $atts['award_slug'] ),
+				),
+			),
+			'posts_per_page' => -1,
+			'meta_key' => 'name_last',
+			'orderby' => 'meta_value',
+			'order' => 'ASC',
+		);
+
+		$query = new WP_Query( $query_args );
+
+		if ( $query->have_posts() ) {
+
+			ob_start();
+
+			?>
+			<section class="awardees-wrapper">
+				<?php if ( 'hide' !== $atts['header'] ) { ?>
+				<h2 class="award-name"><?php echo esc_html( $award->name ); ?></h2>
+				<span class="award-description"><?php echo esc_html( $award->description ); ?></span>
+				<?php } ?>
+
+				<div class="awardees<?php if ( 'modal' === $atts['inscription'] ) { echo ' unbox'; } ?>" id="<?php echo esc_attr( $atts['award_slug'] );?>">
+
+					<?php if ( 'hide' !== $atts['filters'] ) { ?>
+					<div class="awardees-filters">
+
+						<div class="awardees-sort-label">Sort by</div>
+
+						<div class="awardees-sort"
+							 data-sortby="name"
+							 aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"
+							 aria-label="Last Name: activate to sort ascending">Last Name</div>
+
+						<div class="awardees-sort"
+							 data-sortby="<?php echo ( 'hide' !== $atts['sport'] ) ? 'sport' : 'class'; ?>"
+							 aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"
+							 aria-label="Sport(s): activate to sort ascending"><?php echo ( 'hide' !== $atts['sport'] ) ? 'Sport(s)' : 'Class'; ?></div>
+
+						<div class="awardees-search">
+							<label>Search:<input type="search" aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"></label>
+						</div>
+
+					</div>
+					<?php } ?>
+
+					<?php
+					while ( $query->have_posts() ) {
+						$query->the_post();
+						$sort_name = get_post_meta( get_the_ID(), 'name_last', true ) . ' ' . get_post_meta( get_the_ID(), 'name_first', true );
+						$class = get_post_meta( get_the_ID(), 'class', true );
+						$sport = get_post_meta( get_the_ID(), 'sport', true );
+						?>
+
+						<article class="awardee<?php if ( get_the_content() ) { echo ' has-inscription'; } ?>"
+								 data-name="<?php echo esc_attr( $sort_name ); ?>"<?php if ( 'hide' !== $atts['class'] ) { ?>
+								 data-class="<?php echo esc_attr( $class ? $class . ' ' . $sort_name : $sort_name ); ?>"<?php } if ( 'hide' !== $atts['sport'] ) { ?>
+								 data-sport="<?php echo esc_attr( $sport ? $sport . ' ' . $sort_name : $sort_name ); ?>"<?php } ?>>
+
+							<header>
+								<h3><?php the_title(); ?></h3>
+
+								<?php if ( 'hide' !== $atts['class'] && $class ) { ?>
+									<p class="class"><?php echo esc_html( $class ); ?></p>
+								<?php } ?>
+
+								<?php if ( 'hide' !== $atts['sport'] && $sport ) { ?>
+									<p class="sport"><?php echo esc_html( $sport ); ?></p>
+								<?php } ?>
+
+								<?php if ( 'hide' !== $atts['awarded'] && $awarded = get_post_meta( get_the_ID(), 'awarded', true ) ) { ?>
+									<p><?php echo esc_html( $awarded . ' ' . $atts['type'] ); ?></p>
+								<?php } ?>
+
+							</header>
+
+							<?php if ( get_the_content() ) { ?><div><?php echo wp_kses_post( wpautop( get_the_content() ) ); ?></div><?php } ?>
+
+						</article>
+
+						<?php
+					}
+
+					wp_reset_postdata();
+
+					?>
+
+				</div>
+
+			</section>
+			<?php
+
+			$html = ob_get_clean();
+
+		}
+
+		return $html;
 	}
 }

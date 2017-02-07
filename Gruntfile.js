@@ -1,6 +1,30 @@
+var Promise = require( "es6-promise" ).polyfill();
+
 module.exports = function( grunt ) {
     grunt.initConfig( {
         pkg: grunt.file.readJSON( "package.json" ),
+
+        stylelint: {
+            src: [ "src/css/*.css" ]
+        },
+
+        postcss: {
+            options: {
+                processors: [
+                    require( "autoprefixer" )( {
+                        browsers: [ "> 1%", "ie 8-11", "Firefox ESR" ]
+                    } )
+                ]
+            },
+            shortcode: {
+                src: "src/css/shortcode.css",
+                dest: "css/shortcode.css"
+            },
+            admin: {
+                src: "src/css/admin.css",
+                dest: "css/admin.css"
+            }
+        },
 
         phpcs: {
             plugin: {
@@ -14,7 +38,7 @@ module.exports = function( grunt ) {
 
         jscs: {
             scripts: {
-                src: [ "Gruntfile.js", "src/js/*.js" ],
+                src: [ "Gruntfile.js", "js/*.js", "!js/*.min.js" ],
                 options: {
                     preset: "jquery",
                     requireCamelCaseOrUpperCaseIdentifiers: false, // We rely on name_name too much to change them all.
@@ -35,14 +59,41 @@ module.exports = function( grunt ) {
                     unused: false,
                     node: true     // Define globals available when running in Node.
                 }
+            },
+            plugin_scripts: {
+                src: [ "js/*.js", "!js/*.min.js" ],
+                options: {
+                    bitwise: true,
+                    curly: true,
+                    eqeqeq: true,
+                    forin: true,
+                    freeze: true,
+                    noarg: true,
+                    nonbsp: true,
+                    quotmark: "double",
+                    undef: true,
+                    unused: true,
+                    browser: true, // Define globals exposed by modern browsers.
+                    jquery: true   // Define globals exposed by jQuery.
+                }
+            }
+        },
+
+        uglify: {
+            admin_js: {
+                src: "js/shortcode.js",
+                dest: "js/shortcode.min.js"
             }
         }
     } );
 
-	grunt.loadNpmTasks( "grunt-jscs" );
-	grunt.loadNpmTasks( "grunt-contrib-jshint" );
-	grunt.loadNpmTasks( "grunt-phpcs" );
+    grunt.loadNpmTasks( "grunt-contrib-jshint" );
+    grunt.loadNpmTasks( "grunt-contrib-uglify" );
+    grunt.loadNpmTasks( "grunt-jscs" );
+    grunt.loadNpmTasks( "grunt-phpcs" );
+    grunt.loadNpmTasks( "grunt-postcss" );
+    grunt.loadNpmTasks( "grunt-stylelint" );
 
     // Default task(s).
-    grunt.registerTask( "default", [ "phpcs", "jscs", "jshint" ] );
+    grunt.registerTask( "default", [ "postcss", "stylelint", "phpcs", "jscs", "jshint", "uglify" ] );
 };
