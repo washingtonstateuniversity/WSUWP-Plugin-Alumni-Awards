@@ -9,6 +9,15 @@ class WSUWP_Alumni_Awards {
 	private static $instance;
 
 	/**
+	 * Track a version number for script enqueues.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @var string
+	 */
+	var $script_version = '0.0.1';
+
+	/**
 	 * The slug used to register the awardee post type.
 	 *
 	 * @since 0.0.1
@@ -301,8 +310,8 @@ class WSUWP_Alumni_Awards {
 			return '<!-- No award_slug attribute set -->';
 		}
 
-		wp_enqueue_style( 'alumni-awards', plugins_url( 'css/shortcode.css', dirname( __FILE__ ) ) );
-		wp_enqueue_script( 'alumni-awards', plugins_url( 'js/shortcode.min.js', dirname( __FILE__ ) ), array( 'jquery' ) );
+		wp_enqueue_style( 'alumni-awards', plugins_url( 'css/shortcode.css', dirname( __FILE__ ) ), array(), $this->script_version );
+		wp_enqueue_script( 'alumni-awards', plugins_url( 'js/shortcode.min.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->script_version, true );
 
 		$award = get_term_by( 'slug', sanitize_text_field( $atts['award_slug'] ), $this->taxonomy_slug );
 
