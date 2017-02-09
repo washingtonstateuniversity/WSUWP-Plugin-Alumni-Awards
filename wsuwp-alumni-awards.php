@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WSUWP Alumni Awards
-Version: 0.0.1
+Version: 0.0.2
 Description: Tracks and displays alumni awards.
 Author: washingtonstateuniversity
 Author URI: https://web.wsu.edu/
