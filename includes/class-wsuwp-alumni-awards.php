@@ -415,6 +415,8 @@ class WSUWP_Alumni_Awards {
 
 			$html = ob_get_clean();
 
+		} else {
+			return '<!-- No awardees found -->';
 		}
 
 		return $html;
