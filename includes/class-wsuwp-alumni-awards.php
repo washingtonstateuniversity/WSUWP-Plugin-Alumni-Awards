@@ -355,10 +355,12 @@ class WSUWP_Alumni_Awards {
 							 aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"
 							 aria-label="Last Name: activate to sort ascending">Last Name</div>
 
+						<?php if ( 'hide' !== $atts['class'] || 'hide' !== $atts['sport'] ) { ?>
 						<div class="awardees-sort"
 							 data-sortby="<?php echo ( 'hide' !== $atts['sport'] ) ? 'sport' : 'class'; ?>"
 							 aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"
 							 aria-label="Sport(s): activate to sort ascending"><?php echo ( 'hide' !== $atts['sport'] ) ? 'Sport(s)' : 'Class'; ?></div>
+						<?php } ?>
 
 						<div class="awardees-search">
 							<label>Search:<input type="search" aria-controls="<?php echo esc_attr( $atts['award_slug'] );?>"></label>
